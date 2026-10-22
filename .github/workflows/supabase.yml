@@ -35,7 +35,7 @@ jobs:
           SECRET_KEY: ${{ secrets.ATLAS_SUPABASE_SECRET_KEY }}
         run: |
           if [ -z "$PUBLIC_KEY" ] || [ -z "$SECRET_KEY" ]; then echo "Set ATLAS_SUPABASE_PUBLISHABLE_KEY and ATLAS_SUPABASE_SECRET_KEY in GitHub Actions secrets."; exit 1; fi
-          supabase secrets set "SUPABASE_PUBLISHABLE_KEY=$PUBLIC_KEY" "SUPABASE_SECRET_KEY=$SECRET_KEY" --project-ref vvozgyaikmeeeqfansrn
+          supabase secrets set "ATLAS_PUBLISHABLE_KEY=$PUBLIC_KEY" "ATLAS_SECRET_KEY=$SECRET_KEY" --project-ref vvozgyaikmeeeqfansrn
       - name: Deploy Edge Function
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
