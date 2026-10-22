@@ -1,0 +1,4 @@
+project_id = "vvozgyaikmeeeqfansrn"
+
+[functions.atlas-api]
+verify_jwt = false
