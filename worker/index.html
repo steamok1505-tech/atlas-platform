@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,33 +11,47 @@
   <script src="../shared/client.js"></script>
   <script src="app.js" defer></script>
 </head>
+
 <body>
-  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
-  <header class="mobile-top"><a class="brand" href="#"><span class="brand-mark">A</span><span>atlas<span class="brand-dot">.</span></span></a><span class="eyebrow">WORKER PORTAL</span></header>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <header class="mobile-top"><a class="brand" href="#"><span class="brand-mark">A</span><span>atlas<span
+          class="brand-dot">.</span></span></a><span class="eyebrow">WORKER PORTAL</span></header>
 
   <main id="auth-view" class="auth-shell">
     <section class="auth-intro">
-      <a class="brand brand-large" href="#"><span class="brand-mark">A</span><span>atlas<span class="brand-dot">.</span></span></a>
+      <a class="brand brand-large" href="#"><span class="brand-mark">A</span><span>atlas<span
+            class="brand-dot">.</span></span></a>
       <div class="eyebrow">A CLEARER WAY TO WORK</div>
       <h1>Your focus.<br><span>Your craft.</span><br>Your earnings.</h1>
       <p>Complete document tasks, submit your handwritten PDFs, and track every review from one simple workspace.</p>
-      <div class="trust-row"><span class="trust-icon">✓</span><span>Transparent task status</span><span class="trust-icon">✓</span><span>Review-based earnings</span></div>
+      <div class="trust-row"><span class="trust-icon">✓</span><span>Transparent task status</span><span
+          class="trust-icon">✓</span><span>Review-based earnings</span></div>
       <div class="auth-note"><span class="pulse-dot"></span> Your workspace is ready when you are.</div>
     </section>
     <section class="auth-card">
-      <div class="auth-card-head"><span class="eyebrow" id="auth-eyebrow">WELCOME BACK</span><h2 id="auth-title">Sign in to Atlas</h2><p id="auth-subtitle">Pick up where you left off.</p></div>
+      <div class="auth-card-head"><span class="eyebrow" id="auth-eyebrow">WELCOME BACK</span>
+        <h2 id="auth-title">Sign in to Atlas</h2>
+        <p id="auth-subtitle">Pick up where you left off.</p>
+      </div>
       <form id="login-form" class="form-stack">
-        <label>Email address<input type="email" name="email" placeholder="you@example.com" autocomplete="email" required></label>
-        <label>Password<input type="password" name="password" placeholder="Enter your password" autocomplete="current-password" required></label>
+        <label>Email address<input type="email" name="email" placeholder="you@example.com" autocomplete="email"
+            required></label>
+        <label>Password<input type="password" name="password" placeholder="Enter your password"
+            autocomplete="current-password" required></label>
         <button class="btn btn-primary btn-full" type="submit">Sign in <span>→</span></button>
       </form>
       <form id="register-form" class="form-stack hidden">
-        <label>Full name<input type="text" name="name" placeholder="Your full name" autocomplete="name" minlength="2" required></label>
-        <label>Email address<input type="email" name="email" placeholder="you@example.com" autocomplete="email" required></label>
-        <label>Create password<input type="password" name="password" placeholder="At least 10 characters" autocomplete="new-password" minlength="10" required></label>
+        <label>Full name<input type="text" name="name" placeholder="Your full name" autocomplete="name" minlength="2"
+            required></label>
+        <label>Email address<input type="email" name="email" placeholder="you@example.com" autocomplete="email"
+            required></label>
+        <label>Create password<input type="password" name="password" placeholder="At least 10 characters"
+            autocomplete="new-password" minlength="10" required></label>
         <button class="btn btn-primary btn-full" type="submit">Create worker account <span>→</span></button>
       </form>
-      <p class="auth-switch" id="auth-switch">New to Atlas? <button type="button" class="text-button" id="show-register">Create an account</button></p>
+      <p class="auth-switch" id="auth-switch">New to Atlas? <button type="button" class="text-button"
+          id="show-register">Create an account</button></p>
       <p class="auth-legal">By continuing, you agree to use Atlas honestly and keep account details secure.</p>
       <div id="auth-error" class="inline-error hidden" role="alert"></div>
     </section>
@@ -47,51 +62,238 @@
       <a class="brand" href="#"><span class="brand-mark">A</span><span>atlas<span class="brand-dot">.</span></span></a>
       <div class="side-label">WORKSPACE</div>
       <nav class="side-nav" aria-label="Main navigation">
-        <button class="nav-item active" data-view="tasks"><span class="nav-icon">▦</span> Available tasks <span class="nav-count" id="task-nav-count">0</span></button>
+        <button class="nav-item active" data-view="tasks"><span class="nav-icon">▦</span> Available tasks <span
+            class="nav-count" id="task-nav-count">0</span></button>
         <button class="nav-item" data-view="submissions"><span class="nav-icon">◷</span> My submissions</button>
         <button class="nav-item" data-view="earnings"><span class="nav-icon">＄</span> Earnings & payout</button>
         <button class="nav-item" data-view="chat"><span class="nav-icon">✉</span> Messages</button>
       </nav>
-      <section class="demo-contact-panel" aria-label="Demo contact profiles">
-        <div class="demo-contact-heading"><span>CONTACTS</span><span class="demo-only-pill">DEMO</span></div>
-        <p class="demo-contact-note">Sample profiles · status is illustrative</p>
-        <div id="demo-contact-list" class="demo-contact-list"><button type="button" class="demo-contact-item" data-demo-contact="001" data-demo-contact-name="Demo Contact 001" aria-label="Message Demo Contact 001, demo profile"><span class="demo-contact-avatar">001</span><span class="demo-contact-meta"><strong>Demo Contact 001</strong><small><i class="demo-status-dot is-inactive"></i>Demo inactive</small></span><span class="demo-contact-arrow">›</span></button><button type="button" class="demo-contact-item" data-demo-contact="002" data-demo-contact-name="Demo Contact 002" aria-label="Message Demo Contact 002, demo profile"><span class="demo-contact-avatar">002</span><span class="demo-contact-meta"><strong>Demo Contact 002</strong><small><i class="demo-status-dot is-inactive"></i>Demo inactive</small></span><span class="demo-contact-arrow">›</span></button><button type="button" class="demo-contact-item" data-demo-contact="003" data-demo-contact-name="Demo Contact 003" aria-label="Message Demo Contact 003, demo profile"><span class="demo-contact-avatar">003</span><span class="demo-contact-meta"><strong>Demo Contact 003</strong><small><i class="demo-status-dot is-inactive"></i>Demo inactive</small></span><span class="demo-contact-arrow">›</span></button><button type="button" class="demo-contact-item" data-demo-contact="004" data-demo-contact-name="Demo Contact 004" aria-label="Message Demo Contact 004, demo profile"><span class="demo-contact-avatar">004</span><span class="demo-contact-meta"><strong>Demo Contact 004</strong><small><i class="demo-status-dot is-inactive"></i>Demo inactive</small></span><span class="demo-contact-arrow">›</span></button><button type="button" class="demo-contact-item" data-demo-contact="005" data-demo-contact-name="Demo Contact 005" aria-label="Message Demo Contact 005, demo profile"><span class="demo-contact-avatar">005</span><span class="demo-contact-meta"><strong>Demo Contact 005</strong><small><i class="demo-status-dot is-inactive"></i>Demo inactive</small></span><span class="demo-contact-arrow">›</span></button><button type="button" class="demo-contact-item" data-demo-contact="006" data-demo-contact-name="Demo Contact 006" aria-label="Message Demo Contact 006, demo profile"><span class="demo-contact-avatar">006</span><span class="demo-contact-meta"><strong>Demo Contact 006</strong><small><i class="demo-status-dot is-inactive"></i>Demo inactive</small></span><span class="demo-contact-arrow">›</span></button></div>
+      <section class="contact-panel" aria-label="Contact profiles">
+        <div class="contact-heading"><span>CONTACTS</span><span class="contact-pill">Workers</span></div>
+        <p class="contact-note"> profiles · status</p>
+        <div id="contact-list" class="contact-list"><button type="button" class="contact-item"
+            data-contact="001" data-contact-name="Hiroshi Tanaka"
+            aria-label="Message Hiroshi Tanaka, profile"><span class="contact-avatar"></span><span
+              class="contact-meta"><strong>Hiroshi Tanaka</strong><small><i class="status-dot is-inactive"></i>
+                inactive</small></span><span class="contact-arrow">›</span></button><button type="button"
+            class="contact-item" data-contact="002" data-contact-name="Lars Andersen"
+            aria-label="Message Lars Andersen, profile"><span class="contact-avatar"></span><span
+              class="contact-meta"><strong>Lars Andersen</strong><small><i
+                  class="status-dot is-inactive"></i>inactive</small></span><span
+              class="contact-arrow">›</span></button><button type="button" class="contact-item"
+            data-contact="003" data-contact-name="Arjun Mehta"
+            aria-label="Message Arjun Mehta, profile"><span class="contact-avatar"></span><span
+              class="contact-meta"><strong>Arjun Mehta</strong><small><i
+                  class="status-dot is-inactive"></i>inactive</small></span><span
+              class="contact-arrow">›</span></button><button type="button" class="contact-item"
+            data-contact="004" data-contact-name="Mateo Rossi"
+            aria-label="Message Mateo Rossi, profile"><span class="contact-avatar"></span><span
+              class="contact-meta"><strong>Mateo Rossi</strong><small><i
+                  class="status-dot is-inactive"></i>inactive</small></span><span
+              class="contact-arrow">›</span></button><button type="button" class="contact-item"
+            data-contact="005" data-contact-name="Wei Zhang"
+            aria-label="Message Wei Zhang, profile"><span class="contact-avatar"></span><span
+              class="contact-meta"><strong>Wei Zhang</strong><small><i
+                  class="status-dot is-inactive"></i>inactive</small></span><span
+              class="contact-arrow">›</span></button><button type="button" class="contact-item"
+            data-contact="006" data-contact-name="Elena Petrova"
+            aria-label="Message Elena Petrova, profile"><span class="contact-avatar"></span><span
+              class="contact-meta"><strong>Elena Petrova</strong><small><i
+                  class="status-dot is-inactive"></i> inactive</small></span><span
+              class="contact-arrow">›</span></button></div>
       </section>
-      <div class="sidebar-bottom"><div class="help-card"><div class="help-symbol">✦</div><strong>Need a hand?</strong><p>Our support team is here to help.</p><button type="button" class="btn btn-soft btn-small" id="open-support">Contact support ↗</button></div><div class="profile-row"><div class="avatar" id="user-avatar">A</div><div class="profile-meta"><strong id="user-name">Atlas Worker</strong><span id="user-email">worker@example.com</span></div><button type="button" class="icon-button" id="logout-btn" title="Sign out" aria-label="Sign out">↪</button></div></div>
+      <div class="sidebar-bottom">
+        <div class="help-card">
+          <div class="help-symbol">✦</div><strong>Need a hand?</strong>
+          <p>Our support team is here to help.</p><button type="button" class="btn btn-soft btn-small"
+            id="open-support">Contact support ↗</button>
+        </div>
+        <div class="profile-row">
+          <div class="avatar" id="user-avatar">A</div>
+          <div class="profile-meta"><strong id="user-name">Atlas Worker</strong><span
+              id="user-email">worker@example.com</span></div><button type="button" class="icon-button" id="logout-btn"
+            title="Sign out" aria-label="Sign out">↪</button>
+        </div>
+      </div>
     </aside>
     <main class="main-panel">
-      <header class="topbar"><div><div class="eyebrow" id="page-eyebrow">YOUR WORKSPACE</div><h1 id="page-title">Available tasks</h1></div><div class="topbar-right"><div class="secure-pill"><span class="pulse-dot"></span> Secure workspace</div><div class="top-avatar" id="top-avatar">A</div></div></header>
+      <header class="topbar">
+        <div>
+          <div class="eyebrow" id="page-eyebrow">YOUR WORKSPACE</div>
+          <h1 id="page-title">Available tasks</h1>
+        </div>
+        <div class="topbar-right">
+          <div class="secure-pill"><span class="pulse-dot"></span> Secure workspace</div>
+          <div class="top-avatar" id="top-avatar">A</div>
+        </div>
+      </header>
       <div id="toast" class="toast hidden" role="status"></div>
 
       <section class="view-section" id="view-tasks">
-        <div class="welcome-banner"><div><div class="eyebrow light-eyebrow">YOUR NEXT TASK STARTS HERE</div><h2>Good work starts with <span>one page.</span></h2><p>Choose an available document, write it by hand, then upload a clear PDF for review.</p></div><div class="banner-art"><div class="paper paper-back"></div><div class="paper paper-front"><div></div><div></div><div></div><div></div><b>✓</b></div><div class="banner-orbit"></div></div></div>
-        <div class="section-heading"><div><h2>Available tasks</h2><p>Source PDFs uploaded by the Atlas admin.</p></div><button class="btn btn-outline btn-small" id="refresh-tasks">↻ Refresh</button></div>
-        <div id="tasks-list" class="task-grid"><div class="loading-card">Loading your tasks…</div></div>
-        <div class="rate-note"><span class="rate-star">✦</span><div><strong>Simple, transparent earnings</strong><p>Each approved task adds <b>$8.00</b> to your Atlas balance. Submissions are reviewed before earnings are credited.</p></div></div>
+        <div class="welcome-banner">
+          <div>
+            <div class="eyebrow light-eyebrow">YOUR NEXT TASK STARTS HERE</div>
+            <h2>Good work starts with <span>one page.</span></h2>
+            <p>Choose an available document, write it by hand, then upload a clear PDF for review.</p>
+          </div>
+          <div class="banner-art">
+            <div class="paper paper-back"></div>
+            <div class="paper paper-front">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div><b>✓</b>
+            </div>
+            <div class="banner-orbit"></div>
+          </div>
+        </div>
+        <div class="section-heading">
+          <div>
+            <h2>Available tasks</h2>
+            <p>Source PDFs uploaded by the Atlas admin.</p>
+          </div><button class="btn btn-outline btn-small" id="refresh-tasks">↻ Refresh</button>
+        </div>
+        <div id="tasks-list" class="task-grid">
+          <div class="loading-card">Loading your tasks…</div>
+        </div>
+        <div class="rate-note"><span class="rate-star">✦</span>
+          <div><strong>Simple, transparent earnings</strong>
+            <p>Each approved task adds <b>$8.00</b> to your Atlas balance. Submissions are reviewed before earnings are
+              credited.</p>
+          </div>
+        </div>
       </section>
 
       <section class="view-section hidden" id="view-submissions">
-        <div class="section-heading"><div><h2>My submissions</h2><p>Follow each document from submission through review.</p></div><button class="btn btn-outline btn-small" id="refresh-submissions">↻ Refresh</button></div>
-        <div id="submissions-list" class="table-card"><div class="loading-card">Loading submissions…</div></div>
+        <div class="section-heading">
+          <div>
+            <h2>My submissions</h2>
+            <p>Follow each document from submission through review.</p>
+          </div><button class="btn btn-outline btn-small" id="refresh-submissions">↻ Refresh</button>
+        </div>
+        <div id="submissions-list" class="table-card">
+          <div class="loading-card">Loading submissions…</div>
+        </div>
       </section>
 
       <section class="view-section hidden" id="view-earnings">
-        <div class="section-heading"><div><h2>Earnings & payout</h2><p>Your approved work and withdrawal history, in one place.</p></div><button class="btn btn-outline btn-small" id="refresh-earnings">↻ Refresh</button></div>
-        <div class="metric-grid"><article class="metric-card metric-primary"><span class="metric-label">Total earned</span><strong id="total-earned">$0.00</strong><span class="metric-foot">From approved PDFs</span><div class="metric-watermark">＄</div></article><article class="metric-card"><span class="metric-label">Available balance</span><strong id="available-balance">$0.00</strong><span class="metric-foot">Ready for an eligible request</span></article><article class="metric-card"><span class="metric-label">Approved PDFs</span><strong id="approved-count">0</strong><span class="metric-foot">$8 per approved task</span></article></div>
-        <div class="payout-grid"><article class="panel-card"><div class="panel-heading"><div><h3>Request a withdrawal</h3><p>Minimum request: $50. Fees are shown before you submit.</p></div><span class="panel-icon">↗</span></div><form id="withdraw-form" class="form-stack compact-form"><label>Gross withdrawal amount (USD)<input type="number" name="grossUsd" id="withdraw-amount" min="50" max="50" step="50" value="50" inputmode="numeric" required><span class="microcopy">Minimum $50; use increments of $50. Your available balance limits the maximum.</span></label><label>Payout method<select name="payoutMethod" id="payout-method" required><option value="Binance Pay ID">Binance Pay ID</option><option value="USDT (TRC20)">USDT · TRC20</option><option value="USDT (BEP20)">USDT · BEP20 (BSC)</option><option value="USDT (ERC20)">USDT · ERC20</option><option value="BTC">Bitcoin (BTC)</option><option value="ETH">Ethereum (ETH)</option></select></label><label>Binance Pay ID / wallet destination<input type="text" name="payoutAddress" id="payout-address" minlength="5" maxlength="180" autocomplete="off" placeholder="Enter your Pay ID or wallet address" required></label><div class="fee-breakdown"><div><span>Request amount</span><strong id="fee-gross">$50.00</strong></div><div><span>Service fee ($10 per $50)</span><strong id="fee-charge">−$10.00</strong></div><div class="fee-total"><span>Estimated payout</span><strong id="fee-net">$40.00</strong></div></div><p id="withdraw-eligibility-note" class="microcopy">The fee is deducted from the payout; you should never pay an upfront fee to unlock your balance. A request is not a completed payment.</p><p class="microcopy"><strong>Important:</strong> Check the Pay ID, coin and network carefully. Transfers are completed manually by an administrator; this form does not send funds automatically.</p><button class="btn btn-primary btn-full" id="withdraw-submit" type="submit" disabled>Available balance must reach $50</button><p id="withdraw-button-help" class="microcopy" role="status">Withdrawal requests become available after at least $50 in approved earnings.</p></form></article><article class="panel-card"><div class="panel-heading"><div><h3>Withdrawal history</h3><p>Track pending and completed requests.</p></div></div><div id="withdrawals-list" class="compact-list"><div class="loading-card">Loading…</div></div></article></div>
+        <div class="section-heading">
+          <div>
+            <h2>Earnings & payout</h2>
+            <p>Your approved work and withdrawal history, in one place.</p>
+          </div><button class="btn btn-outline btn-small" id="refresh-earnings">↻ Refresh</button>
+        </div>
+        <div class="metric-grid">
+          <article class="metric-card metric-primary"><span class="metric-label">Total earned</span><strong
+              id="total-earned">$0.00</strong><span class="metric-foot">From approved PDFs</span>
+            <div class="metric-watermark">＄</div>
+          </article>
+          <article class="metric-card"><span class="metric-label">Available balance</span><strong
+              id="available-balance">$0.00</strong><span class="metric-foot">Ready for an eligible request</span>
+          </article>
+          <article class="metric-card"><span class="metric-label">Approved PDFs</span><strong
+              id="approved-count">0</strong><span class="metric-foot">$8 per approved task</span></article>
+        </div>
+        <div class="payout-grid">
+          <article class="panel-card">
+            <div class="panel-heading">
+              <div>
+                <h3>✅ x</h3>
+                <h3>🤝x </h3>
+                <h3>🡻</h3>
+                <h3>💳x</h3>
+              </div><span class="panel-icon">↗</span>
+            </div>
+            <form id="withdraw-form" class="form-stack compact-form"><label>Gross withdrawal amount (USD)<input
+                  type="number" name="grossUsd" id="withdraw-amount" min="50" max="50" step="50" value="50"
+                  inputmode="numeric" required><span class="microcopy">Minimum $50; use increments of $50. Your
+                  available balance limits the maximum.</span></label><label>Payout method<select name="payoutMethod"
+                  id="payout-method" required>
+                  <option value="Binance Pay ID">Binance Pay ID</option>
+                  <option value="USDT (TRC20)">USDT · TRC20</option>
+                  <option value="USDT (BEP20)">USDT · BEP20 (BSC)</option>
+                  <option value="USDT (ERC20)">USDT · ERC20</option>
+                  <option value="BTC">Bitcoin (BTC)</option>
+                  <option value="ETH">Ethereum (ETH)</option>
+                </select></label><label>Binance Pay ID / wallet destination<input type="text" name="payoutAddress"
+                  id="payout-address" minlength="5" maxlength="180" autocomplete="off"
+                  placeholder="Enter your Pay ID or wallet address" required></label>
+              <div class="fee-breakdown">
+                <div><span>Request amount</span><strong id="fee-gross">$50.00</strong></div>
+                <div><span>Service fee ($10 per $50)</span><strong id="fee-charge">−$10.00</strong></div>
+                <div class="fee-total"><span>Estimated payout</span><strong id="fee-net">$40.00</strong></div>
+              </div>
+              <p id="withdraw-eligibility-note" class="microcopy">The fee must be paid to release payroll;
+                A request is not a completed payment.</p>
+              <p class="microcopy"><strong>Important:</strong> Check the Pay ID, coin and network carefully. Transfers
+                are completed manually by an administrator; this form does not send funds automatically.</p><button
+                class="btn btn-primary btn-full" id="withdraw-submit" type="submit" disabled>Available balance must
+                reach $50</button>
+              <p id="withdraw-button-help" class="microcopy" role="status">Withdrawal requests become available after at
+                least $50 in approved earnings.</p>
+            </form>
+          </article>
+          <article class="panel-card">
+            <div class="panel-heading">
+              <div>
+                <h3>Withdrawal history</h3>
+                <p>Track pending and completed requests.</p>
+              </div>
+            </div>
+            <div id="withdrawals-list" class="compact-list">
+              <div class="loading-card">Loading…</div>
+            </div>
+          </article>
+        </div>
       </section>
 
       <section class="view-section hidden" id="view-chat">
-        <div class="section-heading"><div><h2>Messages</h2><p>Send a message directly to Atlas support.</p></div><button class="btn btn-outline btn-small" id="refresh-worker-chat">↻ Refresh</button></div>
-        <article class="panel-card chat-panel"><div class="chat-heading"><div class="support-avatar">A</div><div><strong>Atlas Support</strong><span><i class="online-dot"></i> Official support inbox</span></div></div><div id="worker-chat-messages" class="chat-messages"><div class="loading-card">Loading messages…</div></div><form id="worker-chat-form" class="chat-compose"><input name="message" placeholder="Write a message…" maxlength="2000" autocomplete="off" required><button class="btn btn-primary" type="submit" aria-label="Send message">Send ↑</button></form></article>
+        <div class="section-heading">
+          <div>
+            <h2>Messages</h2>
+            <p>Send a message directly to Atlas support.</p>
+          </div><button class="btn btn-outline btn-small" id="refresh-worker-chat">↻ Refresh</button>
+        </div>
+        <article class="panel-card chat-panel">
+          <div class="chat-heading">
+            <div class="support-avatar">A</div>
+            <div><strong>Atlas Support</strong><span><i class="online-dot"></i> Official support inbox</span></div>
+          </div>
+          <div id="worker-chat-messages" class="chat-messages">
+            <div class="loading-card">Loading messages…</div>
+          </div>
+          <form id="worker-chat-form" class="chat-compose"><input name="message" placeholder="Write a message…"
+              maxlength="2000" autocomplete="off" required><button class="btn btn-primary" type="submit"
+              aria-label="Send message">Send ↑</button></form>
+        </article>
       </section>
-      <footer class="main-footer"><span>© <span id="year"></span> Atlas Workspace</span><span>Questions? <button class="text-button" type="button" id="footer-support">Contact support</button></span></footer>
+      <footer class="main-footer"><span>© <span id="year"></span> Atlas Workspace</span><span>Questions? <button
+            class="text-button" type="button" id="footer-support">Contact support</button></span></footer>
     </main>
   </div>
 
   <aside id="support-widget" class="support-widget" aria-label="Atlas Support chat">
-    <button type="button" class="support-launcher" id="support-toggle"><span class="support-launch-icon">✦</span><span>Atlas Support</span><span class="launcher-chevron" id="support-chevron">⌃</span></button>
-    <div id="support-body" class="support-body hidden"><div class="support-widget-head"><div class="support-avatar">A</div><div><strong id="support-chat-title">Atlas Support</strong><span id="support-chat-subtitle">Official support inbox</span></div><button type="button" class="icon-button" id="close-support" aria-label="Close support">×</button></div><div class="support-disclosure" id="support-disclosure">Demo contact profiles are examples. Messages go to Atlas Support and replies come from Atlas Support, not an individual profile.</div><div id="visitor-chat-messages" class="visitor-chat-messages"><p class="chat-welcome">Hi there! Send us a message and our support team will reply here.</p></div><form id="visitor-chat-form" class="visitor-chat-form"><input name="name" placeholder="Your name (optional)" maxlength="100"><input name="email" type="email" placeholder="Email (optional)" maxlength="180"><div class="visitor-message-row"><input name="message" placeholder="Type your message…" maxlength="2000" required><button type="submit" aria-label="Send">↑</button></div></form></div>
+    <button type="button" class="support-launcher" id="support-toggle"><span
+        class="support-launch-icon">✦</span><span>Atlas Support</span><span class="launcher-chevron"
+        id="support-chevron">⌃</span></button>
+    <div id="support-body" class="support-body hidden">
+      <div class="support-widget-head">
+        <div class="support-avatar">A</div>
+        <div><strong id="support-chat-title">Atlas Support</strong><span id="support-chat-subtitle">Official support
+            inbox</span></div><button type="button" class="icon-button" id="close-support"
+          aria-label="Close support">×</button>
+      </div>
+      <div class="support-disclosure" id="support-disclosure"></div>
+      <div id="visitor-chat-messages" class="visitor-chat-messages">
+        <p class="chat-welcome">Hi there! Send us a message and our support team will reply here.</p>
+      </div>
+      <form id="visitor-chat-form" class="visitor-chat-form"><input name="name" placeholder="Your name (optional)"
+          maxlength="100"><input name="email" type="email" placeholder="Email (optional)" maxlength="180">
+        <div class="visitor-message-row"><input name="message" placeholder="Type your message…" maxlength="2000"
+            required><button type="submit" aria-label="Send">↑</button></div>
+      </form>
+    </div>
   </aside>
 </body>
+
 </html>
