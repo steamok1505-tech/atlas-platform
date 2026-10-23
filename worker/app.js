@@ -89,6 +89,11 @@
       state.maxWithdrawal = maxEligible;
       amountInput.max = String(Math.max(50, maxEligible));
       $('withdraw-submit').disabled = maxEligible < 50;
+      $('withdraw-submit').textContent = maxEligible < 50 ? 'Available balance must reach $50' : 'Submit withdrawal request →';
+      const buttonHelp = $('withdraw-button-help');
+      if (buttonHelp) buttonHelp.textContent = maxEligible < 50
+        ? `Your current available balance is ${dollars(data.available)}. Approve enough work to reach $50 before requesting a withdrawal.`
+        : 'You are eligible to submit a withdrawal request. The fee is deducted from the payout; no upfront payment is required.';
       $('withdraw-eligibility-note').textContent = maxEligible < 50
         ? 'Your available balance must reach $50 before you can request a withdrawal. Never pay an upfront fee to unlock earnings.'
         : `Eligible withdrawal amount: $50 to $${maxEligible.toFixed(2)} in $50 increments. The fee is deducted from payout; no upfront fee is required.`;
@@ -129,6 +134,8 @@
       return `<button type="button" class="demo-contact-item" data-demo-contact="${contact.id}" data-demo-contact-name="${contact.name}" aria-label="Message ${contact.name}, demo profile"><span class="demo-contact-avatar">${String(index + 1).padStart(2, '0')}</span><span class="demo-contact-meta"><strong>${contact.name}</strong><small><i class="demo-status-dot ${active ? 'is-active' : 'is-inactive'}"></i>${active ? 'Demo active' : 'Demo inactive'}</small></span><span class="demo-contact-arrow">›</span></button>`;
     }).join('');
   }
+  // Render contacts immediately so the sidebar does not appear empty if a later API request fails.
+  renderDemoContacts();
   function selectDemoContact(id, name) {
     state.selectedDemoContact = { id, name };
     state.visitorId = getVisitorId(`demo-${id}`);
@@ -226,7 +233,7 @@
     catch (err) { toast(err.message,true); }
   });
   $('year').textContent = new Date().getFullYear();
-  setAuthMode(false); updateFeePreview(); renderDemoContacts();
+  setAuthMode(false); updateFeePreview();
   api('/api/me').then(({user}) => { if (user.role === 'worker') showWorkspace(user); else { api('/api/auth/logout',{method:'POST'}).catch(()=>{}); showAuth(); } }).catch(() => showAuth());
   setInterval(() => { if (!$('support-body').classList.contains('hidden')) loadVisitorChat(); if (state.view === 'chat' && state.user) loadWorkerChat(); }, 12000);
 })();
