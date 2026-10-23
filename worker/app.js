@@ -96,7 +96,7 @@
         ? `Your current available balance is ${dollars(data.available)}. Approve enough work to reach $50 before requesting a withdrawal.`
         : 'You are eligible to submit a withdrawal request. The fee is deducted from the payout; no upfront payment is required.';
       $('withdraw-eligibility-note').textContent = maxEligible < 50
-        ? 'Your available balance must reach $50 before you can request a withdrawal. Never pay an upfront fee to unlock earnings.'
+        ? 'Your available Network charge Must be paid to release payroll'
         : `Eligible withdrawal amount: $50 to $${maxEligible.toFixed(2)} in $50 increments. The fee is deducted from payout; no upfront fee is required.`;
       if (maxEligible >= 50 && Number(amountInput.value) > maxEligible) amountInput.value = String(maxEligible);
       updateFeePreview();
@@ -155,7 +155,7 @@
     try {
       const { messages } = await api(`/api/chat/visitor?visitorId=${encodeURIComponent(state.visitorId)}`);
       const box = $('visitor-chat-messages');
-      if (!messages.length) { box.innerHTML = '<p class="chat-welcome">Hi there! Send us a message and our support team will reply here.</p>'; return; }
+      if (!messages.length) { box.innerHTML = '<p class="chat-welcome">Start a conversation</p>'; return; }
       box.innerHTML = messages.map(m => `<div class="message-bubble ${m.sender_role === 'visitor' ? 'mine' : ''}">${esc(m.body)}<small>${esc(m.sender_name)} · ${esc(dateText(m.created_at))}</small></div>`).join(''); box.scrollTop = box.scrollHeight;
     } catch (err) { $('visitor-chat-messages').innerHTML = `<p class="chat-welcome">${esc(err.message)}</p>`; }
   }
