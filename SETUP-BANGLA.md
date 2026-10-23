@@ -54,7 +54,13 @@ GitHub username ও repository name অনুযায়ী URL হবে:
 
 **মনে রাখবে:** এই ZIP-এর default workflow একই GitHub Pages site-এ দুই portal-কে আলাদা path-এ প্রকাশ করে। সম্পূর্ণ আলাদা domain/Pages site চাইলে worker ও admin frontend-কে আলাদা GitHub repository-তে deploy করতে হবে। Supabase backend একই থাকতে পারে।
 
-## ৭) প্রথমে test করো
+## ৭) নতুন migration ও demo profile
+
+`supabase/migrations/202610230002_demo_profiles_and_payout_destinations.sql` migration-টি deploy হতে হবে। এটি withdrawal request-এ Binance Pay ID / wallet destination সংরক্ষণ করে এবং ৪০০টি `DEMO ONLY` synthetic profile ও আলাদা sample conversation তৈরি করে। এগুলো login করতে পারে না এবং real worker/earnings-এর সঙ্গে মেশে না।
+
+Withdrawal form-এ Pay ID বা wallet address এবং সঠিক coin/network নির্বাচন করতে হবে। ভুল network/address-এ crypto পাঠালে ফেরত পাওয়া নাও যেতে পারে। Admin transfer নিজে সম্পন্ন করার পরেই `Mark paid` ব্যবহার করবে; সাইট নিজে থেকে Binance-এ টাকা পাঠায় না।
+
+## ৮) প্রথমে test করো
 
 Worker account দিয়ে register/login, task দেখা, submission upload, earnings এবং withdrawal request পরীক্ষা করো। Admin account দিয়ে PDF upload, submission review, approval, worker messages এবং withdrawal review পরীক্ষা করো। বাস্তব worker-দের invite করার আগে test data দিয়ে পুরো workflow যাচাই করো।
 

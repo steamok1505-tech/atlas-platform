@@ -1,7 +1,7 @@
 (() => {
   const API = String(window.ATLAS_API_URL || '').replace(/\/$/, '');
   const $ = (id) => document.getElementById(id);
-  const state = { user: null, view: 'tasks', visitorId: getVisitorId() };
+  const state = { user: null, view: 'tasks', visitorId: getVisitorId(), maxWithdrawal: 0 };
   const titles = { tasks: ['YOUR WORKSPACE','Available tasks'], submissions: ['TRACK YOUR WORK','My submissions'], earnings: ['YOUR BALANCE','Earnings & payout'], chat: ['WE’RE HERE TO HELP','Messages'] };
   const esc = (value) => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   const dollars = (value) => `$${Number(value || 0).toFixed(2)}`;
@@ -83,9 +83,16 @@
     try {
       const data = await api('/api/worker/earnings');
       $('total-earned').textContent = dollars(data.totalEarned); $('available-balance').textContent = dollars(data.available); $('approved-count').textContent = data.approvedCount;
-      const select = $('withdraw-amount');
-      [...select.options].forEach(option => { option.disabled = Number(option.value) > data.available; });
-      if (Number(select.value) > data.available) select.value = '50'; updateFeePreview();
+      const amountInput = $('withdraw-amount');
+      const maxEligible = Math.floor(Number(data.available || 0) / 50) * 50;
+      state.maxWithdrawal = maxEligible;
+      amountInput.max = String(Math.max(50, maxEligible));
+      $('withdraw-submit').disabled = maxEligible < 50;
+      $('withdraw-eligibility-note').textContent = maxEligible < 50
+        ? 'Your available balance must reach $50 before you can request a withdrawal. Never pay an upfront fee to unlock earnings.'
+        : `Eligible withdrawal amount: $50 to $${maxEligible.toFixed(2)} in $50 increments. The fee is deducted from payout; no upfront fee is required.`;
+      if (maxEligible >= 50 && Number(amountInput.value) > maxEligible) amountInput.value = String(maxEligible);
+      updateFeePreview();
     } catch (err) { if (state.user) toast(err.message, true); }
   }
   async function loadWithdrawals() {
@@ -93,10 +100,17 @@
     try {
       const { withdrawals } = await api('/api/worker/withdrawals');
       if (!withdrawals.length) { list.innerHTML = '<div class="empty-state"><strong>No withdrawal requests</strong>Eligible requests will appear here.</div>'; return; }
-      list.innerHTML = withdrawals.map(w => `<div class="history-row"><div><strong>${dollars(w.gross)} requested</strong><small>${esc(dateText(w.requested_at))} · Fee ${dollars(w.fee)}</small>${w.admin_note ? `<small>${esc(w.admin_note)}</small>` : ''}</div><div class="history-amount"><strong>${dollars(w.net)}</strong><small>${statusPill(w.status)}</small></div></div>`).join('');
+      list.innerHTML = withdrawals.map(w => `<div class="history-row"><div><strong>${dollars(w.gross)} requested</strong><small>${esc(dateText(w.requested_at))} · Fee ${dollars(w.fee)}</small><small>${esc(w.payout_method || 'Payout')} · ${esc(w.payout_address || 'No destination saved')}</small>${w.admin_note ? `<small>${esc(w.admin_note)}</small>` : ''}</div><div class="history-amount"><strong>${dollars(w.net)}</strong><small>${statusPill(w.status)}</small></div></div>`).join('');
     } catch (err) { list.innerHTML = `<div class="empty-state">${esc(err.message)}</div>`; }
   }
-  function updateFeePreview() { const gross = Number($('withdraw-amount').value || 50); const fee = gross / 50 * 10; $('fee-gross').textContent = dollars(gross); $('fee-charge').textContent = `−${dollars(fee)}`; $('fee-net').textContent = dollars(gross - fee); }
+  function updateFeePreview() {
+    const gross = Number($('withdraw-amount').value);
+    const valid = Number.isInteger(gross) && gross >= 50 && gross % 50 === 0;
+    const fee = valid ? gross / 50 * 10 : 0;
+    $('fee-gross').textContent = Number.isFinite(gross) && gross > 0 ? dollars(gross) : '—';
+    $('fee-charge').textContent = valid ? `−${dollars(fee)}` : '—';
+    $('fee-net').textContent = valid ? dollars(gross - fee) : '—';
+  }
   async function loadWorkerChat() {
     const box = $('worker-chat-messages'); box.innerHTML = '<div class="loading-card">Loading messages…</div>';
     try {
@@ -157,12 +171,24 @@
     catch (err) { toast(err.message, true); }
     finally { button.disabled = false; button.textContent = original; }
   });
-  $('withdraw-amount').addEventListener('change', updateFeePreview);
+  $('withdraw-amount').addEventListener('input', updateFeePreview);
   $('withdraw-form').addEventListener('submit', async event => {
-    event.preventDefault(); const grossUsd = Number($('withdraw-amount').value);
-    if (!confirm(`Request ${dollars(grossUsd)} gross? The estimated service fee is ${dollars(grossUsd / 50 * 10)}, so the estimated payout is ${dollars(grossUsd - grossUsd / 50 * 10)}.`)) return;
-    try { await api('/api/worker/withdrawals', {method:'POST',body:JSON.stringify({grossUsd})}); toast('Withdrawal request submitted. Payment is not automatic; check its status in your history.'); loadEarnings(); loadWithdrawals(); }
-    catch (err) { toast(err.message, true); }
+    event.preventDefault();
+    const grossUsd = Number($('withdraw-amount').value);
+    const payoutMethod = $('payout-method').value;
+    const payoutAddress = $('payout-address').value.trim();
+    if (!Number.isInteger(grossUsd) || grossUsd < 50 || grossUsd % 50 !== 0) { toast('Enter a withdrawal amount of at least $50 in $50 increments.', true); return; }
+    if (grossUsd > state.maxWithdrawal) { toast(`Your current eligible maximum is $${state.maxWithdrawal.toFixed(2)}.`, true); return; }
+    if (payoutAddress.length < 5 || payoutAddress.length > 180) { toast('Enter a valid payout destination (5–180 characters).', true); return; }
+    const fee = grossUsd / 50 * 10;
+    if (!confirm(`Request ${dollars(grossUsd)} gross via ${payoutMethod}? Fee: ${dollars(fee)}. Estimated payout: ${dollars(grossUsd - fee)}. Destination ends in ${payoutAddress.slice(-6)}. Check the network carefully; the transfer is manual.`)) return;
+    const button = $('withdraw-submit'); button.disabled = true;
+    try {
+      await api('/api/worker/withdrawals', {method:'POST',body:JSON.stringify({grossUsd,payoutMethod,payoutAddress})});
+      toast('Withdrawal request submitted. An administrator must complete the transfer manually.');
+      await loadEarnings(); await loadWithdrawals();
+    } catch (err) { toast(err.message, true); }
+    finally { button.disabled = state.maxWithdrawal < 50; }
   });
   $('worker-chat-form').addEventListener('submit', async event => {
     event.preventDefault(); const input = event.currentTarget.elements.message; const message = input.value.trim(); if (!message) return;

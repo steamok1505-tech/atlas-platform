@@ -5,7 +5,7 @@ A static worker portal and admin console backed by Supabase Auth, PostgreSQL, pr
 - `worker/` — worker portal
 - `admin/` — admin console
 - `shared/client.js` — API client and private PDF uploads
-- `supabase/migrations/` — database schema, private PDF bucket, access policies, and withdrawal reservation RPC
+- `supabase/migrations/` — database schema, private PDF bucket, access policies, withdrawal reservation RPC, payout destinations, and isolated demo data
 - `supabase/functions/atlas-api/` — backend API; uses server-only Supabase secret key
 - `.github/workflows/pages.yml` — deploys both frontends to GitHub Pages
 - `.github/workflows/supabase.yml` — applies the migration and deploys the Edge Function
@@ -48,5 +48,6 @@ Then sign in to `/admin/` with that account. Worker accounts are assigned the `w
 
 - Each approved PDF credits $8 once; approval is restricted to pending submissions.
 - Withdrawal requests are in $50 increments. The $10 fee per $50 is deducted from payout, not charged upfront.
-- `Mark paid` records a completed external transfer; it does not itself transfer money.
+- Workers can specify a Binance Pay ID or a supported crypto network destination. The administrator must verify the destination/network and complete any transfer manually; `Mark paid` does not itself transfer money.
+- Migration `202610230002_demo_profiles_and_payout_destinations.sql` adds 400 explicitly labelled synthetic demo profiles and isolated sample conversations. They are not Auth accounts and do not affect real worker counts, submissions, or earnings.
 - This is a deployable starter, not a completed production audit. Test with dummy PDFs and test accounts before inviting real workers. Add rate limiting, abuse protection, operational monitoring, backups, dispute handling, and appropriate legal/payment checks before public launch.

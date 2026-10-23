@@ -4,6 +4,7 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const PUBLISHABLE_KEY = Deno.env.get('ATLAS_PUBLISHABLE_KEY') || Deno.env.get('SUPABASE_ANON_KEY') || '';
 const SECRET_KEY = Deno.env.get('ATLAS_SECRET_KEY') || Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 const BUCKET = 'atlas-pdfs';
+const PAYOUT_METHODS = ['Binance Pay ID', 'USDT (TRC20)', 'USDT (BEP20)', 'USDT (ERC20)', 'BTC', 'ETH'] as const;
 const publicClient = createClient(SUPABASE_URL, PUBLISHABLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
 const adminClient = createClient(SUPABASE_URL, SECRET_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
 
@@ -174,15 +175,19 @@ async function route(req: Request): Promise<Response> {
   }
   if (method === 'GET' && path === '/api/worker/withdrawals') {
     if (user.role !== 'worker') throw new ApiError(403, 'Worker access required.');
-    const { data, error } = await adminClient.from('withdrawals').select('id,gross_cents,fee_cents,net_cents,status,admin_note,requested_at,processed_at').eq('worker_id', user.id).order('requested_at', { ascending: false });
+    const { data, error } = await adminClient.from('withdrawals').select('id,gross_cents,fee_cents,net_cents,status,admin_note,requested_at,processed_at,payout_method,payout_address').eq('worker_id', user.id).order('requested_at', { ascending: false });
     if (error) throw error;
     return json({ withdrawals: (data || []).map(w => ({ ...w, gross: money(w.gross_cents), fee: money(w.fee_cents), net: money(w.net_cents) })) });
   }
   if (method === 'POST' && path === '/api/worker/withdrawals') {
     if (user.role !== 'worker') throw new ApiError(403, 'Worker access required.');
     const body = await bodyJson(req); const gross = Number(body.grossUsd);
+    const payoutMethod = clean(body.payoutMethod, 40);
+    const payoutAddress = clean(body.payoutAddress, 180);
     if (!Number.isInteger(gross) || gross < 50 || gross % 50 !== 0) throw new ApiError(400, 'Withdrawal requests must be $50 or a multiple of $50.');
-    const { data, error } = await adminClient.rpc('atlas_request_withdrawal', { p_worker_id: user.id, p_gross_cents: gross * 100 });
+    if (!PAYOUT_METHODS.includes(payoutMethod as typeof PAYOUT_METHODS[number])) throw new ApiError(400, 'Choose a supported Binance payout method or network.');
+    if (payoutAddress.length < 5 || payoutAddress.length > 180) throw new ApiError(400, 'Enter a payout destination between 5 and 180 characters.');
+    const { data, error } = await adminClient.rpc('atlas_request_withdrawal', { p_worker_id: user.id, p_gross_cents: gross * 100, p_payout_method: payoutMethod, p_payout_address: payoutAddress });
     if (error) { if (String(error.message).includes('available balance')) { const bal = await earnings(user.id); throw new ApiError(400, `Your available balance is $${bal.available.toFixed(2)}.`); } throw error; }
     const row = Array.isArray(data) ? data[0] : data;
     if (!row) throw new ApiError(500, 'Withdrawal request could not be created.');
@@ -280,6 +285,11 @@ async function route(req: Request): Promise<Response> {
     for (const s of subs || []) { const v = stats.get(s.worker_id) || { approved_count: 0, pending_count: 0 }; if (s.status === 'approved') v.approved_count++; if (s.status === 'pending') v.pending_count++; stats.set(s.worker_id, v); }
     return json({ workers: (workers || []).map(w => ({ ...w, ...(stats.get(w.id) || { approved_count: 0, pending_count: 0 }), earned: money(((stats.get(w.id)?.approved_count || 0) * 800)) })) });
   }
+  if (method === 'GET' && path === '/api/admin/demo-profiles') {
+    const { data: profiles, error } = await adminClient.from('demo_profiles').select('id,name,email,created_at,is_demo').order('id', { ascending: true });
+    if (error) throw error;
+    return json({ profiles: profiles || [] });
+  }
   if (method === 'GET' && path === '/api/admin/withdrawals') {
     const { data: withdrawals, error } = await adminClient.from('withdrawals').select('*').order('requested_at', { ascending: false }); if (error) throw error;
     const ids = [...new Set((withdrawals || []).map(w => w.worker_id))];
@@ -296,25 +306,45 @@ async function route(req: Request): Promise<Response> {
     return json({ ok: true, status, message: status === 'paid' ? 'Marked paid. Complete the transfer externally before using this action.' : 'Withdrawal rejected; reserved balance has been released.' });
   }
   if (method === 'GET' && path === '/api/admin/chat/threads') {
-    const { data: all, error } = await adminClient.from('messages').select('*').order('id', { ascending: false }).limit(2000); if (error) throw error;
+    const [{ data: all, error }, { data: demos, error: de }] = await Promise.all([
+      adminClient.from('messages').select('*').order('id', { ascending: false }).limit(3000),
+      adminClient.from('demo_profiles').select('id,name,email,created_at,is_demo').order('id', { ascending: true }),
+    ]);
+    if (error) throw error; if (de) throw de;
     const latest = new Map<string, any>(); const visitorFirst = new Map<string, any>();
     for (const m of all || []) { const k = `${m.thread_type}:${m.thread_key}`; if (!latest.has(k)) latest.set(k, m); if (m.thread_type === 'visitor') visitorFirst.set(k, m); }
+    const demoMap = new Map<string, any>((demos || []).map((d: any) => [d.id, d] as [string, any]));
+    for (const d of demos || []) {
+      const k = `demo:${d.id}`;
+      if (!latest.has(k)) latest.set(k, { thread_type: 'demo', thread_key: d.id, sender_role: 'worker', sender_name: d.name, sender_email: d.email, body: 'DEMO ONLY — sample conversation (no real worker).', created_at: d.created_at, id: 0 });
+    }
     const threadRows = [...latest.values()]; const workerIds = [...new Set(threadRows.filter(m => m.thread_type === 'worker').map(m => m.thread_key))];
     const { data: workers, error: we } = workerIds.length ? await adminClient.from('profiles').select('id,name,email').in('id', workerIds) : { data: [], error: null }; if (we) throw we;
     const wm = new Map<string, any>((workers || []).map((w: any) => [w.id, w] as [string, any]));
-    return json({ threads: threadRows.map(t => { const k = `${t.thread_type}:${t.thread_key}`; const w = wm.get(t.thread_key); const first = visitorFirst.get(k); return { ...t, display_name: t.thread_type === 'worker' ? (w?.name || `Worker ${t.thread_key.slice(0, 8)}`) : (first?.sender_name || 'Website visitor'), display_email: t.thread_type === 'worker' ? (w?.email || '') : (first?.sender_email || '') }; }) });
+    const threads = threadRows.map(t => {
+      const k = `${t.thread_type}:${t.thread_key}`; const w = wm.get(t.thread_key); const first = visitorFirst.get(k); const demo = demoMap.get(t.thread_key);
+      return { ...t,
+        display_name: t.thread_type === 'worker' ? (w?.name || `Worker ${t.thread_key.slice(0, 8)}`) : t.thread_type === 'demo' ? (demo?.name || 'DEMO PROFILE') : (first?.sender_name || 'Website visitor'),
+        display_email: t.thread_type === 'worker' ? (w?.email || '') : t.thread_type === 'demo' ? (demo?.email || '') : (first?.sender_email || '')
+      };
+    });
+    threads.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    return json({ threads });
   }
   if (method === 'GET' && path === '/api/admin/chat/messages') {
     const type = url.searchParams.get('type'); const key = clean(url.searchParams.get('key'), 100);
-    if (!['worker', 'visitor'].includes(type || '') || !key) throw new ApiError(400, 'Select a valid conversation.');
+    if (!['worker', 'visitor', 'demo'].includes(type || '') || !key) throw new ApiError(400, 'Select a valid conversation.');
+    if (type === 'demo') { const { data: profile, error: pe } = await adminClient.from('demo_profiles').select('id').eq('id', key).maybeSingle(); if (pe) throw pe; if (!profile) throw new ApiError(404, 'Demo profile not found.'); }
     const { data, error } = await adminClient.from('messages').select('id,sender_role,sender_name,sender_email,body,created_at').eq('thread_type', type).eq('thread_key', key).order('id').limit(300);
     if (error) throw error; return json({ messages: data || [] });
   }
   if (method === 'POST' && path === '/api/admin/chat/reply') {
     const body = await bodyJson(req); const type = body.type; const key = clean(body.key, 100); const message = clean(body.message, 2000);
-    if (!['worker', 'visitor'].includes(type) || !key || !message) throw new ApiError(400, 'Select a conversation and write a message.');
+    if (!['worker', 'visitor', 'demo'].includes(type) || !key || !message) throw new ApiError(400, 'Select a conversation and write a message.');
     if (type === 'worker') { const { data: worker, error } = await adminClient.from('profiles').select('id').eq('id', key).eq('role', 'worker').maybeSingle(); if (error) throw error; if (!worker) throw new ApiError(404, 'Worker not found.'); }
-    const { error } = await adminClient.from('messages').insert({ thread_type: type, thread_key: key, sender_role: 'admin', sender_name: type === 'visitor' ? 'Atlas Support' : 'Atlas Admin', body: message });
+    if (type === 'demo') { const { data: profile, error } = await adminClient.from('demo_profiles').select('id').eq('id', key).maybeSingle(); if (error) throw error; if (!profile) throw new ApiError(404, 'Demo profile not found.'); }
+    const senderName = type === 'demo' ? 'Atlas Support (Demo)' : type === 'visitor' ? 'Atlas Support' : 'Atlas Admin';
+    const { error } = await adminClient.from('messages').insert({ thread_type: type, thread_key: key, sender_role: 'admin', sender_name: senderName, body: message });
     if (error) throw error; return json({ ok: true }, 201);
   }
   throw new ApiError(404, 'Endpoint not found.');
