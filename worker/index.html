@@ -71,34 +71,30 @@
       <section class="contact-panel" aria-label="Contact profiles">
         <div class="contact-heading"><span>CONTACTS</span><span class="contact-pill">Workers</span></div>
         <p class="contact-note"> profiles · status</p>
-        <div id="contact-list" class="contact-list"><button type="button" class="contact-item"
-            data-contact="001" data-contact-name="Hiroshi Tanaka"
-            aria-label="Message Hiroshi Tanaka, profile"><span class="contact-avatar"></span><span
-              class="contact-meta"><strong>Hiroshi Tanaka</strong><small><i class="status-dot is-inactive"></i>
+        <div id="contact-list" class="contact-list"><button type="button" class="contact-item" data-contact="001"
+            data-contact-name="Hiroshi Tanaka" aria-label="Message Hiroshi Tanaka, profile"><span
+              class="contact-avatar"></span><span class="contact-meta"><strong>Hiroshi Tanaka</strong><small><i
+                  class="status-dot is-inactive"></i>
                 inactive</small></span><span class="contact-arrow">›</span></button><button type="button"
             class="contact-item" data-contact="002" data-contact-name="Lars Andersen"
             aria-label="Message Lars Andersen, profile"><span class="contact-avatar"></span><span
               class="contact-meta"><strong>Lars Andersen</strong><small><i
                   class="status-dot is-inactive"></i>inactive</small></span><span
-              class="contact-arrow">›</span></button><button type="button" class="contact-item"
-            data-contact="003" data-contact-name="Arjun Mehta"
-            aria-label="Message Arjun Mehta, profile"><span class="contact-avatar"></span><span
-              class="contact-meta"><strong>Arjun Mehta</strong><small><i
+              class="contact-arrow">›</span></button><button type="button" class="contact-item" data-contact="003"
+            data-contact-name="Arjun Mehta" aria-label="Message Arjun Mehta, profile"><span
+              class="contact-avatar"></span><span class="contact-meta"><strong>Arjun Mehta</strong><small><i
                   class="status-dot is-inactive"></i>inactive</small></span><span
-              class="contact-arrow">›</span></button><button type="button" class="contact-item"
-            data-contact="004" data-contact-name="Mateo Rossi"
-            aria-label="Message Mateo Rossi, profile"><span class="contact-avatar"></span><span
-              class="contact-meta"><strong>Mateo Rossi</strong><small><i
+              class="contact-arrow">›</span></button><button type="button" class="contact-item" data-contact="004"
+            data-contact-name="Mateo Rossi" aria-label="Message Mateo Rossi, profile"><span
+              class="contact-avatar"></span><span class="contact-meta"><strong>Mateo Rossi</strong><small><i
                   class="status-dot is-inactive"></i>inactive</small></span><span
-              class="contact-arrow">›</span></button><button type="button" class="contact-item"
-            data-contact="005" data-contact-name="Wei Zhang"
-            aria-label="Message Wei Zhang, profile"><span class="contact-avatar"></span><span
-              class="contact-meta"><strong>Wei Zhang</strong><small><i
+              class="contact-arrow">›</span></button><button type="button" class="contact-item" data-contact="005"
+            data-contact-name="Wei Zhang" aria-label="Message Wei Zhang, profile"><span
+              class="contact-avatar"></span><span class="contact-meta"><strong>Wei Zhang</strong><small><i
                   class="status-dot is-inactive"></i>inactive</small></span><span
-              class="contact-arrow">›</span></button><button type="button" class="contact-item"
-            data-contact="006" data-contact-name="Elena Petrova"
-            aria-label="Message Elena Petrova, profile"><span class="contact-avatar"></span><span
-              class="contact-meta"><strong>Elena Petrova</strong><small><i
+              class="contact-arrow">›</span></button><button type="button" class="contact-item" data-contact="006"
+            data-contact-name="Elena Petrova" aria-label="Message Elena Petrova, profile"><span
+              class="contact-avatar"></span><span class="contact-meta"><strong>Elena Petrova</strong><small><i
                   class="status-dot is-inactive"></i> inactive</small></span><span
               class="contact-arrow">›</span></button></div>
       </section>
@@ -251,13 +247,13 @@
         <div class="section-heading">
           <div>
             <h2>Messages</h2>
-            <p>Send a message directly to Atlas support.</p>
+            <p>Start Here!</p>
           </div><button class="btn btn-outline btn-small" id="refresh-worker-chat">↻ Refresh</button>
         </div>
         <article class="panel-card chat-panel">
           <div class="chat-heading">
             <div class="support-avatar">A</div>
-            <div><strong>Atlas Support</strong><span><i class="online-dot"></i> Official support inbox</span></div>
+            <div><strong>Inbox</strong><span><i class="online-dot"></i> Create your chat</span></div>
           </div>
           <div id="worker-chat-messages" class="chat-messages">
             <div class="loading-card">Loading messages…</div>
@@ -268,7 +264,7 @@
         </article>
       </section>
       <footer class="main-footer"><span>© <span id="year"></span> Atlas Workspace</span><span>Questions? <button
-            class="text-button" type="button" id="footer-support">Contact support</button></span></footer>
+            class="text-button" type="button" id="footer-support">Open inbox</button></span></footer>
     </main>
   </div>
 
@@ -278,15 +274,16 @@
         id="support-chevron">⌃</span></button>
     <div id="support-body" class="support-body hidden">
       <div class="support-widget-head">
-        <div class="support-avatar"></div>
-        <div><strong id="support-chat-title">Atlas Support</strong><span id="support-chat-subtitle">Official support
-            inbox</span></div><button type="button" class="icon-button" id="close-support"
-          aria-label="Close support">×</button>
+        <div class="support-avatar">A</div>
+        <div><strong id="support-chat-title">Inbox</strong><span id="support-chat-subtitle">Inbox</span></div>
+        <button type="button" class="icon-button" id="close-support" aria-label="Close support">×</button>
       </div>
       <div id="visitor-chat-messages" class="visitor-chat-messages">
-        <p class="chat-welcome">Start a Conversation</p>
+        <p class="chat-welcome">Start a conversation
+        </p>
       </div>
-      <form id="visitor-chat-form" class="visitor-chat-form">
+      <form id="visitor-chat-form" class="visitor-chat-form"><input name="name" placeholder="Your name (optional)"
+          maxlength="100"><input name="email" type="email" placeholder="Email (optional)" maxlength="180">
         <div class="visitor-message-row"><input name="message" placeholder="Type your message…" maxlength="2000"
             required><button type="submit" aria-label="Send">↑</button></div>
       </form>
