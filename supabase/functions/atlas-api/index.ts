@@ -104,15 +104,17 @@ async function route(req: Request): Promise<Response> {
     const name = clean(body.name, 100) || 'Website visitor';
     const email = clean(body.email, 180);
     const message = clean(body.message, 2000);
+    const rawContactLabel = clean(body.contactLabel, 40);
+    const contactLabel = /^Demo Contact \d{3}$/.test(rawContactLabel) ? rawContactLabel : null;
     if (!/^[a-zA-Z0-9_-]{16,100}$/.test(visitorId) || !message) throw new ApiError(400, 'A valid visitor session and message are required.');
-    const { error } = await adminClient.from('messages').insert({ thread_type: 'visitor', thread_key: visitorId, sender_role: 'visitor', sender_name: name, sender_email: email, body: message });
+    const { error } = await adminClient.from('messages').insert({ thread_type: 'visitor', thread_key: visitorId, sender_role: 'visitor', sender_name: name, sender_email: email, contact_label: contactLabel, body: message });
     if (error) throw error;
     return json({ ok: true }, 201);
   }
   if (method === 'GET' && path === '/api/chat/visitor') {
     const visitorId = clean(url.searchParams.get('visitorId'), 100);
     if (!/^[a-zA-Z0-9_-]{16,100}$/.test(visitorId)) throw new ApiError(400, 'Invalid visitor session.');
-    const { data, error } = await adminClient.from('messages').select('id,sender_role,sender_name,body,created_at').eq('thread_type', 'visitor').eq('thread_key', visitorId).order('id').limit(200);
+    const { data, error } = await adminClient.from('messages').select('id,sender_role,sender_name,body,created_at,contact_label').eq('thread_type', 'visitor').eq('thread_key', visitorId).order('id').limit(200);
     if (error) throw error;
     return json({ messages: data || [] });
   }
@@ -324,7 +326,7 @@ async function route(req: Request): Promise<Response> {
     const threads = threadRows.map(t => {
       const k = `${t.thread_type}:${t.thread_key}`; const w = wm.get(t.thread_key); const first = visitorFirst.get(k); const demo = demoMap.get(t.thread_key);
       return { ...t,
-        display_name: t.thread_type === 'worker' ? (w?.name || `Worker ${t.thread_key.slice(0, 8)}`) : t.thread_type === 'demo' ? (demo?.name || 'DEMO PROFILE') : (first?.sender_name || 'Website visitor'),
+        display_name: t.thread_type === 'worker' ? (w?.name || `Worker ${t.thread_key.slice(0, 8)}`) : t.thread_type === 'demo' ? (demo?.name || 'DEMO PROFILE') : `${first?.sender_name || 'Website visitor'}${first?.contact_label ? ` · ${first.contact_label}` : ''}`,
         display_email: t.thread_type === 'worker' ? (w?.email || '') : t.thread_type === 'demo' ? (demo?.email || '') : (first?.sender_email || '')
       };
     });

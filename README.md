@@ -51,3 +51,8 @@ Then sign in to `/admin/` with that account. Worker accounts are assigned the `w
 - Workers can specify a Binance Pay ID or a supported crypto network destination. The administrator must verify the destination/network and complete any transfer manually; `Mark paid` does not itself transfer money.
 - Migration `202610230002_demo_profiles_and_payout_destinations.sql` adds 400 explicitly labelled synthetic demo profiles and isolated sample conversations. They are not Auth accounts and do not affect real worker counts, submissions, or earnings.
 - This is a deployable starter, not a completed production audit. Test with dummy PDFs and test accounts before inviting real workers. Add rate limiting, abuse protection, operational monitoring, backups, dispute handling, and appropriate legal/payment checks before public launch.
+
+
+### Demo contact sidebar (latest update)
+
+The worker sidebar can show six synthetic `Demo Contact` entries with randomized illustrative statuses. These are not real people or real online-presence indicators. Selecting one opens a separate support conversation, routes messages into the admin inbox, and keeps replies under the `Atlas Support` identity. Apply all Supabase migrations before using this feature; the latest migration adds `messages.contact_label`.

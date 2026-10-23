@@ -70,3 +70,8 @@ Worker account দিয়ে register/login, task দেখা, submission upload
 - Publishable key browser-এ থাকা স্বাভাবিক; নিরাপত্তা নির্ভর করে backend authorization, Auth এবং RLS/configuration-এর ওপরও।
 - Withdrawal `Mark paid` শুধু status বদলায়; এটি নিজে থেকে ব্যাংক/মোবাইল ওয়ালেটে টাকা পাঠায় না।
 - এটি deployable starter, production security audit-এর বিকল্প নয়।
+
+
+### Demo contact sidebar (latest update)
+
+Worker sidebar-e 6-ti clearly labelled `Demo Contact` dekhabe. Active/inactive status shudhu demo visual, real worker online status noy. Kono demo contact select korle alada support conversation khulbe; message admin inbox-e jabe ebong reply `Atlas Support` name-e dekhabe. Latest Supabase migration apply korte hobe, karon `messages.contact_label` column jog kora hoyeche.

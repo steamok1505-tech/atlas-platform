@@ -1,14 +1,15 @@
 (() => {
   const API = String(window.ATLAS_API_URL || '').replace(/\/$/, '');
   const $ = (id) => document.getElementById(id);
-  const state = { user: null, view: 'tasks', visitorId: getVisitorId(), maxWithdrawal: 0 };
+  const state = { user: null, view: 'tasks', visitorId: getVisitorId('support'), selectedDemoContact: null, maxWithdrawal: 0 };
   const titles = { tasks: ['YOUR WORKSPACE','Available tasks'], submissions: ['TRACK YOUR WORK','My submissions'], earnings: ['YOUR BALANCE','Earnings & payout'], chat: ['WE’RE HERE TO HELP','Messages'] };
   const esc = (value) => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   const dollars = (value) => `$${Number(value || 0).toFixed(2)}`;
   const dateText = (value) => value ? new Date(String(value).replace(' ', 'T') + (String(value).endsWith('Z') ? '' : 'Z')).toLocaleDateString(undefined, {year:'numeric',month:'short',day:'numeric'}) : '—';
-  function getVisitorId() {
-    let id = localStorage.getItem('atlasVisitorId');
-    if (!id) { id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID().replace(/-/g,'') : `visitor_${Date.now()}_${Math.random().toString(36).slice(2)}`; localStorage.setItem('atlasVisitorId', id); }
+  function getVisitorId(scope = 'support') {
+    const storageKey = `atlasVisitorId:${scope}`;
+    let id = localStorage.getItem(storageKey);
+    if (!id) { id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID().replace(/-/g,'') : `visitor_${Date.now()}_${Math.random().toString(36).slice(2)}`; localStorage.setItem(storageKey, id); }
     return id;
   }
   async function api(path, options = {}) { return window.AtlasApi.request(path, options); }
@@ -119,6 +120,29 @@
       box.scrollTop = box.scrollHeight;
     } catch (err) { box.innerHTML = `<div class="empty-state">${esc(err.message)}</div>`; }
   }
+  function renderDemoContacts() {
+    const list = $('demo-contact-list'); if (!list) return;
+    const contacts = Array.from({ length: 6 }, (_, i) => ({ id: String(i + 1).padStart(3, '0'), name: `Demo Contact ${String(i + 1).padStart(3, '0')}` }));
+    // These are explicitly synthetic UI profiles; random status is a demo visual only, not real presence.
+    list.innerHTML = contacts.map((contact, index) => {
+      const active = Math.random() >= 0.5;
+      return `<button type="button" class="demo-contact-item" data-demo-contact="${contact.id}" data-demo-contact-name="${contact.name}" aria-label="Message ${contact.name}, demo profile"><span class="demo-contact-avatar">${String(index + 1).padStart(2, '0')}</span><span class="demo-contact-meta"><strong>${contact.name}</strong><small><i class="demo-status-dot ${active ? 'is-active' : 'is-inactive'}"></i>${active ? 'Demo active' : 'Demo inactive'}</small></span><span class="demo-contact-arrow">›</span></button>`;
+    }).join('');
+  }
+  function selectDemoContact(id, name) {
+    state.selectedDemoContact = { id, name };
+    state.visitorId = getVisitorId(`demo-${id}`);
+    $('support-chat-title').textContent = name;
+    $('support-chat-subtitle').textContent = 'Demo profile · sample contact';
+    $('support-disclosure').textContent = 'This is a demo profile, not a real individual. Your message goes to Atlas Support, and replies are sent by Atlas Support.';
+    toggleSupport(true);
+  }
+  function selectGeneralSupport() {
+    state.selectedDemoContact = null; state.visitorId = getVisitorId('support');
+    $('support-chat-title').textContent = 'Atlas Support'; $('support-chat-subtitle').textContent = 'Official support inbox';
+    $('support-disclosure').textContent = 'You are chatting with the Atlas support team, not an individual worker.';
+    toggleSupport(true);
+  }
   async function loadVisitorChat() {
     try {
       const { messages } = await api(`/api/chat/visitor?visitorId=${encodeURIComponent(state.visitorId)}`);
@@ -145,7 +169,8 @@
     if (event.target.closest('#logout-btn')) { try { await api('/api/auth/logout', {method:'POST'}); } catch {} showAuth(); setAuthMode(false); }
     if (event.target.closest('#support-toggle')) toggleSupport();
     if (event.target.closest('#close-support')) toggleSupport(false);
-    if (event.target.closest('#open-support') || event.target.closest('#footer-support')) toggleSupport(true);
+    if (event.target.closest('#open-support') || event.target.closest('#footer-support')) selectGeneralSupport();
+    const demoContact = event.target.closest('[data-demo-contact]'); if (demoContact) selectDemoContact(demoContact.dataset.demoContact, demoContact.dataset.demoContactName);
   });
   $('login-form').addEventListener('submit', async event => {
     event.preventDefault(); clearAuthError(); const form = new FormData(event.currentTarget);
@@ -197,11 +222,11 @@
   });
   $('visitor-chat-form').addEventListener('submit', async event => {
     event.preventDefault(); const form = event.currentTarget; const message = form.elements.message.value.trim(); if (!message) return;
-    try { await api('/api/chat/visitor',{method:'POST',body:JSON.stringify({visitorId:state.visitorId,name:form.elements.name.value,email:form.elements.email.value,message})}); form.elements.message.value=''; loadVisitorChat(); }
+    try { await api('/api/chat/visitor',{method:'POST',body:JSON.stringify({visitorId:state.visitorId,name:form.elements.name.value,email:form.elements.email.value,message,contactLabel:state.selectedDemoContact?.name || ''})}); form.elements.message.value=''; loadVisitorChat(); }
     catch (err) { toast(err.message,true); }
   });
   $('year').textContent = new Date().getFullYear();
-  setAuthMode(false); updateFeePreview();
+  setAuthMode(false); updateFeePreview(); renderDemoContacts();
   api('/api/me').then(({user}) => { if (user.role === 'worker') showWorkspace(user); else { api('/api/auth/logout',{method:'POST'}).catch(()=>{}); showAuth(); } }).catch(() => showAuth());
   setInterval(() => { if (!$('support-body').classList.contains('hidden')) loadVisitorChat(); if (state.view === 'chat' && state.user) loadWorkerChat(); }, 12000);
 })();
